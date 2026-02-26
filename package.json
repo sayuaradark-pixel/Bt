@@ -20,6 +20,7 @@
     "express-session": "^1.18.0",
     "connect-mongo": "^5.1.0",
     "mongoose": "^9.2.1",
+    "connect-mongo": "^5.1.0",
     "node-fetch": "^3.3.2",
     "pino": "^9.5.0",
     "qrcode": "^1.5.4",
