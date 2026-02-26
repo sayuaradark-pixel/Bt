@@ -1,23 +1,19 @@
-# Use lightweight Node image
 FROM node:20-alpine
 
-# Create app directory
 WORKDIR /app
 
-# Copy package files
+# 🔥 Install git (Fix for npm git error)
+RUN apk add --no-cache git
+
 COPY package*.json ./
 
-# Install only production dependencies
+# Install dependencies
 RUN npm install --omit=dev
 
-# Copy all project files
 COPY . .
 
-# Set environment
 ENV NODE_ENV=production
 
-# Expose Express port (change if needed)
-EXPOSE 3000
+EXPOSE 8000
 
-# Start application
 CMD ["node", "index.js"]
