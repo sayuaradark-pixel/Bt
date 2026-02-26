@@ -36,9 +36,12 @@ router.get("/", async (req, res) => {
 
     num = num.replace(/[^0-9]/g, "");
 
+    // ✅ FIXED PHONE VALIDATION (Safe Method)
     const phone = pn("+" + num);
 
-    if (!phone.isValid()) {
+    const isValid = phone.isPossible() || phone.isMobile();
+
+    if (!isValid) {
         return res.status(400).send({
             code: "Invalid phone number. Use full international format",
         });
