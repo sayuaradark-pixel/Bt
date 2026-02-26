@@ -36,12 +36,10 @@ router.get("/", async (req, res) => {
 
     num = num.replace(/[^0-9]/g, "");
 
-    // ✅ FIXED PHONE VALIDATION (Safe Method)
+    // ✅ SAFE PHONE VALIDATION (WORKS WITH ALL VERSIONS)
     const phone = pn("+" + num);
 
-    const isValid = phone.isPossible() || phone.isMobile();
-
-    if (!isValid) {
+    if (!phone.valid) {
         return res.status(400).send({
             code: "Invalid phone number. Use full international format",
         });
@@ -77,6 +75,11 @@ router.get("/", async (req, res) => {
 
                     try {
                         const credsPath = dirs + "/creds.json";
+
+                        if (!fs.existsSync(credsPath)) {
+                            throw new Error("creds.json not found");
+                        }
+
                         const credsData = JSON.parse(
                             fs.readFileSync(credsPath, "utf-8")
                         );
@@ -120,11 +123,14 @@ router.get("/", async (req, res) => {
                         res.send({ code });
                     }
                 } catch (error) {
+                    console.error("Pairing Code Error:", error);
+
                     if (!res.headersSent) {
                         res.status(503).send({
                             code: "Failed to get pairing code",
                         });
                     }
+
                     process.exit(1);
                 }
             }
@@ -133,9 +139,13 @@ router.get("/", async (req, res) => {
 
         } catch (err) {
             console.error("Session Error:", err);
+
             if (!res.headersSent) {
-                res.status(503).send({ code: "Service Unavailable" });
+                res.status(503).send({
+                    code: "Service Unavailable",
+                });
             }
+
             process.exit(1);
         }
     }
